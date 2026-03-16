@@ -20,6 +20,7 @@ module.exports = `
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 
 /* ── FAB (floating action button) ────────────────────────────────────── */
 .hw-fab {
