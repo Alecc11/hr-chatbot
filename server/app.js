@@ -32,7 +32,16 @@ app.use(helmet({
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 // ─────────────────────────────────────────────
-// 3. CORS — before rate limiting (handles preflight OPTIONS)
+// 3. Widget bundle — public file, must be above CORS so any origin can load it
+// ─────────────────────────────────────────────
+app.get('/widget.bundle.js', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.sendFile(path.join(__dirname, '..', 'public', 'widget.bundle.js'));
+});
+
+// ─────────────────────────────────────────────
+// 4. CORS — before rate limiting (handles preflight OPTIONS)
 // ─────────────────────────────────────────────
 app.use(corsMiddleware);
 
@@ -49,17 +58,8 @@ app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 app.use(cookieParser());
 
 // ─────────────────────────────────────────────
-// 6. Widget bundle — served explicitly so headers are guaranteed.
-// The widget is public and must be embeddable on any origin.
-// Access-Control-Allow-Origin: * allows the script to load cross-origin.
-// Cross-Origin-Resource-Policy: cross-origin overrides Helmet's same-origin default.
+// 6. Static files
 // ─────────────────────────────────────────────
-app.get('/widget.bundle.js', (_req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.sendFile(path.join(__dirname, '..', 'public', 'widget.bundle.js'));
-});
-
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ─────────────────────────────────────────────
