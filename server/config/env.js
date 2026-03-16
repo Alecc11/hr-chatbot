@@ -29,6 +29,7 @@ module.exports = {
   ALLOWED_ORIGINS: [
     process.env.ALLOWED_ORIGIN_1 || 'https://www.letterride.com',
     process.env.ALLOWED_ORIGIN_2 || 'http://localhost:3000',
+    process.env.ALLOWED_ORIGIN_3,
   ].filter(Boolean),
 
   RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 900000,
