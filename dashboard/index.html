@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LetterRide HR Support — Agent Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+  <!-- ── Login Screen ──────────────────────────────────────────────────── -->
+  <div id="login-screen" class="screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-mark">LR</span>
+        <div>
+          <div class="logo-title">LetterRide</div>
+          <div class="logo-sub">HR Agent Dashboard</div>
+        </div>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field-group">
+          <label for="username">Username</label>
+          <input id="username" type="text" autocomplete="username"
+                 placeholder="hr.rep1" required />
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password"
+                 placeholder="••••••••" required />
+        </div>
+        <div id="login-error" class="form-error" hidden></div>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-full">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Dashboard Screen ──────────────────────────────────────────────── -->
+  <div id="dashboard-screen" class="screen" hidden>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-brand">
+        <span class="logo-mark logo-mark--sm">LR</span>
+        <span class="header-title">HR Support</span>
+        <span class="header-divider">|</span>
+        <span class="header-subtitle">Agent Dashboard</span>
+      </div>
+      <div class="header-right">
+        <span class="status-dot" id="ws-status-dot"></span>
+        <span id="ws-status-label" class="status-label">Connecting...</span>
+        <span class="header-rep" id="header-rep-name"></span>
+        <button class="btn btn-ghost" id="logout-btn">Log Out</button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+
+      <!-- Queue Panel -->
+      <aside class="queue-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Incoming Requests</h2>
+          <span class="queue-badge" id="queue-count">0</span>
+        </div>
+        <div id="queue-list" class="queue-list">
+          <div class="queue-empty" id="queue-empty">
+            <div class="queue-empty-icon">—</div>
+            <p>No pending requests.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Chat Panel -->
+      <main class="chat-panel">
+
+        <!-- Empty state -->
+        <div id="chat-empty-state" class="chat-empty">
+          <div class="chat-empty-icon">—</div>
+          <p class="chat-empty-title">No active session</p>
+          <p class="chat-empty-sub">Accept an incoming request from the queue to begin a conversation.</p>
+        </div>
+
+        <!-- Active chat -->
+        <div id="chat-active" class="chat-active" hidden>
+          <div class="chat-header">
+            <div class="chat-visitor-info">
+              <div class="chat-visitor-name" id="chat-visitor-name"></div>
+              <div class="chat-visitor-meta" id="chat-visitor-meta"></div>
+            </div>
+            <button class="btn btn-danger" id="end-chat-btn">End Chat</button>
+          </div>
+
+          <div id="chat-messages" class="chat-messages"></div>
+
+          <div class="chat-input-row">
+            <textarea
+              id="chat-input"
+              class="chat-input"
+              placeholder="Type a message and press Enter or click Send..."
+              rows="2"
+              maxlength="2000"
+            ></textarea>
+            <button class="btn btn-primary" id="send-btn">Send</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
