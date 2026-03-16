@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: hr-chatbot
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build:widget
+    startCommand: node server/index.js
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      # Set the following secrets manually in Render Dashboard → Environment tab:
+      # JWT_SECRET
+      # JWT_EXPIRY
+      # HR_USER_1_NAME, HR_USER_1_HASH
+      # HR_USER_2_NAME, HR_USER_2_HASH
+      # HR_USER_3_NAME, HR_USER_3_HASH
+      # HR_USER_4_NAME, HR_USER_4_HASH
+      # ALLOWED_ORIGIN_1
+      # ALLOWED_ORIGIN_2
+      # RATE_LIMIT_WINDOW_MS
+      # RATE_LIMIT_MAX
+      # SESSION_TOKEN_TTL_MS
