@@ -1,0 +1,427 @@
+{
+  "version": "1.0.0",
+  "initialNode": "lang_select",
+  "nodes": {
+
+    "lang_select": {
+      "id": "lang_select",
+      "type": "select",
+      "content": {
+        "en": "Welcome to LetterRide HR Support. Please select your preferred language.",
+        "es": "Bienvenido al soporte de Recursos Humanos de LetterRide. Por favor seleccione su idioma."
+      },
+      "options": [
+        { "label": { "en": "English", "es": "English" }, "next": "cat_select", "setLang": "en" },
+        { "label": { "en": "Español", "es": "Español" }, "next": "cat_select", "setLang": "es" }
+      ]
+    },
+
+    "cat_select": {
+      "id": "cat_select",
+      "type": "select",
+      "content": {
+        "en": "How can we assist you today? Please select a category.",
+        "es": "Como podemos ayudarle hoy? Por favor seleccione una categoria."
+      },
+      "options": [
+        { "label": { "en": "Benefits",         "es": "Beneficios"       }, "next": "topic_benefits"    },
+        { "label": { "en": "Payroll",           "es": "Nomina"           }, "next": "topic_payroll"     },
+        { "label": { "en": "Leave of Absence",  "es": "Licencia"         }, "next": "topic_leave"       },
+        { "label": { "en": "Onboarding",        "es": "Incorporacion"    }, "next": "topic_onboarding"  },
+        { "label": { "en": "Other",             "es": "Otro"             }, "next": "topic_other"       }
+      ]
+    },
+
+    "topic_benefits": {
+      "id": "topic_benefits",
+      "type": "select",
+      "content": {
+        "en": "Please select a benefits topic.",
+        "es": "Por favor seleccione un tema de beneficios."
+      },
+      "options": [
+        { "label": { "en": "Health Insurance Enrollment",  "es": "Inscripcion en Seguro Medico"  }, "next": "q_health_enrollment"  },
+        { "label": { "en": "Health Coverage Questions",    "es": "Preguntas sobre Cobertura"     }, "next": "q_health_coverage"    },
+        { "label": { "en": "Dental and Vision",            "es": "Dental y Vision"               }, "next": "q_dental_vision"      },
+        { "label": { "en": "401(k) Enrollment",            "es": "Inscripcion en 401(k)"         }, "next": "q_401k_enrollment"    },
+        { "label": { "en": "401(k) Employer Match",        "es": "Aportacion del Empleador"      }, "next": "q_401k_match"         },
+        { "label": { "en": "Back",                         "es": "Regresar"                      }, "next": "cat_select"           }
+      ]
+    },
+
+    "q_health_enrollment": {
+      "id": "q_health_enrollment",
+      "type": "answer",
+      "content": {
+        "en": "Open enrollment occurs each November for coverage effective January 1. Outside of open enrollment, you may only make changes if you experience a qualifying life event, such as marriage, divorce, birth of a child, or loss of other coverage. To initiate a qualifying event change, please contact HR within 30 days of the event.",
+        "es": "La inscripcion abierta ocurre cada noviembre para cobertura efectiva el 1 de enero. Fuera del periodo de inscripcion, solo puede realizar cambios si experimenta un evento de vida calificado, como matrimonio, divorcio, nacimiento de un hijo o perdida de otra cobertura. Para iniciar un cambio por evento calificado, contacte a RR.HH. dentro de los 30 dias del evento."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_health_coverage": {
+      "id": "q_health_coverage",
+      "type": "answer",
+      "content": {
+        "en": "LetterRide offers medical coverage through our group health plan. Your insurance card should arrive within 7 to 10 business days of enrollment. For questions about what is covered, copay amounts, or to find an in-network provider, please refer to the Summary of Benefits document provided during onboarding, or contact the insurance carrier directly using the number on your insurance card.",
+        "es": "LetterRide ofrece cobertura medica a traves de nuestro plan de salud grupal. Su tarjeta de seguro debe llegar dentro de 7 a 10 dias habiles despues de la inscripcion. Para preguntas sobre lo que esta cubierto, montos de copago o para encontrar un proveedor dentro de la red, consulte el documento de Resumen de Beneficios proporcionado durante su incorporacion, o contacte a la aseguradora directamente usando el numero en su tarjeta."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_dental_vision": {
+      "id": "q_dental_vision",
+      "type": "answer",
+      "content": {
+        "en": "Dental and vision coverage are offered as voluntary benefits during open enrollment each November. Dental covers preventive care at 100%, basic restorative at 80%, and major restorative at 50% after deductible. Vision covers one eye exam per year and an annual allowance toward frames or contacts. To confirm your current enrollment status, please review your benefits confirmation email or contact HR.",
+        "es": "La cobertura dental y de vision se ofrecen como beneficios voluntarios durante la inscripcion abierta cada noviembre. El dental cubre atencion preventiva al 100%, restauraciones basicas al 80% y restauraciones mayores al 50% despues del deducible. La vision cubre un examen ocular por ano y una asignacion anual para lentes o lentes de contacto. Para confirmar su estado de inscripcion actual, revise su correo de confirmacion de beneficios o contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_401k_enrollment": {
+      "id": "q_401k_enrollment",
+      "type": "answer",
+      "content": {
+        "en": "You are eligible to enroll in the 401(k) plan after 90 days of employment. Enrollment is completed online through our benefits portal. You may contribute between 1% and 50% of your pre-tax compensation, up to the IRS annual limit. To access the portal or for assistance with enrollment, please contact HR or visit the benefits section of the employee intranet.",
+        "es": "Usted es elegible para inscribirse en el plan 401(k) despues de 90 dias de empleo. La inscripcion se completa en linea a traves de nuestro portal de beneficios. Puede contribuir entre el 1% y el 50% de su compensacion antes de impuestos, hasta el limite anual del IRS. Para acceder al portal o para asistencia con la inscripcion, contacte a RR.HH. o visite la seccion de beneficios en la intranet para empleados."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_401k_match": {
+      "id": "q_401k_match",
+      "type": "answer",
+      "content": {
+        "en": "LetterRide matches 100% of your contributions up to 4% of your eligible compensation. The employer match vests on a 3-year graded schedule: 33% after year one, 67% after year two, and 100% after year three. Contributions are invested per your elections in the benefits portal. For detailed fund options or to update your contribution rate, log in to the benefits portal or contact HR.",
+        "es": "LetterRide iguala el 100% de sus contribuciones hasta el 4% de su compensacion elegible. La aportacion del empleador se adquiere en un calendario gradual de 3 anos: 33% despues del primer ano, 67% despues del segundo y 100% despues del tercero. Las contribuciones se invierten segun sus elecciones en el portal de beneficios. Para opciones detalladas de fondos o para actualizar su tasa de contribucion, inicie sesion en el portal de beneficios o contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "topic_payroll": {
+      "id": "topic_payroll",
+      "type": "select",
+      "content": {
+        "en": "Please select a payroll topic.",
+        "es": "Por favor seleccione un tema de nomina."
+      },
+      "options": [
+        { "label": { "en": "Pay Schedule",          "es": "Calendario de Pago"     }, "next": "q_pay_schedule"    },
+        { "label": { "en": "Direct Deposit",         "es": "Deposito Directo"       }, "next": "q_direct_deposit"  },
+        { "label": { "en": "Pay Stub Access",        "es": "Acceso a Recibo de Pago" }, "next": "q_paystub"        },
+        { "label": { "en": "W-2 or Tax Forms",       "es": "Formulario W-2 o Impuestos" }, "next": "q_w2"         },
+        { "label": { "en": "Overtime and PTO Payout","es": "Horas Extra y Pago de PTO" }, "next": "q_overtime"    },
+        { "label": { "en": "Back",                   "es": "Regresar"               }, "next": "cat_select"       }
+      ]
+    },
+
+    "q_pay_schedule": {
+      "id": "q_pay_schedule",
+      "type": "answer",
+      "content": {
+        "en": "LetterRide employees are paid on a bi-weekly schedule, every other Friday. The pay period covers the two weeks ending the prior Saturday. If a pay date falls on a bank holiday, payment will be issued on the preceding business day. The full payroll calendar for the current year is available on the employee intranet under the Payroll section.",
+        "es": "Los empleados de LetterRide reciben su pago en un horario quincenal, cada dos viernes. El periodo de pago cubre las dos semanas que terminan el sabado anterior. Si una fecha de pago cae en un dia festivo bancario, el pago se emitira el dia habil anterior. El calendario completo de nomina para el ano actual esta disponible en la intranet para empleados en la seccion de Nomina."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_direct_deposit": {
+      "id": "q_direct_deposit",
+      "type": "answer",
+      "content": {
+        "en": "To set up or update direct deposit, log in to the payroll portal and navigate to Payment Elections. You may split your deposit across up to three accounts. Changes submitted before the payroll cutoff on Monday of a pay week will take effect that same pay period. Changes submitted after the cutoff will take effect the following pay period. For login assistance, contact HR.",
+        "es": "Para configurar o actualizar su deposito directo, inicie sesion en el portal de nomina y navegue a Elecciones de Pago. Puede dividir su deposito entre hasta tres cuentas. Los cambios enviados antes del cierre de nomina el lunes de una semana de pago tendran efecto en ese mismo periodo. Los cambios enviados despues del cierre tendran efecto en el siguiente periodo de pago. Para asistencia con el inicio de sesion, contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_paystub": {
+      "id": "q_paystub",
+      "type": "answer",
+      "content": {
+        "en": "Pay stubs are available electronically through the payroll portal. You may view and download current and historical pay stubs at any time. Paper stubs are not issued by default. If you require a paper copy, HR can print one upon request. If you are having trouble accessing the portal, please contact HR with your employee ID and we will assist you.",
+        "es": "Los recibos de pago estan disponibles electronicamente a traves del portal de nomina. Puede ver y descargar recibos de pago actuales e historicos en cualquier momento. Los recibos en papel no se emiten de forma predeterminada. Si necesita una copia impresa, RR.HH. puede imprimirla a pedido. Si tiene problemas para acceder al portal, contacte a RR.HH. con su numero de empleado y le ayudaremos."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_w2": {
+      "id": "q_w2",
+      "type": "answer",
+      "content": {
+        "en": "W-2 forms are issued electronically by January 31 each year and are available in the payroll portal under Tax Documents. If you consented to electronic delivery, you will not receive a paper W-2 by mail. If you need a paper copy or have not received your W-2 by February 15, please contact HR. For questions about specific withholding amounts, you may also submit an updated W-4 through the payroll portal at any time.",
+        "es": "Los formularios W-2 se emiten electronicamente antes del 31 de enero de cada ano y estan disponibles en el portal de nomina en Documentos Fiscales. Si dio su consentimiento para la entrega electronica, no recibira un W-2 en papel por correo. Si necesita una copia impresa o no ha recibido su W-2 antes del 15 de febrero, contacte a RR.HH. Para preguntas sobre montos de retencion especificos, tambien puede enviar un W-4 actualizado a traves del portal de nomina en cualquier momento."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_overtime": {
+      "id": "q_overtime",
+      "type": "answer",
+      "content": {
+        "en": "Non-exempt employees are eligible for overtime pay at 1.5 times the regular rate for hours worked beyond 40 in a workweek. Overtime must be pre-approved by your supervisor. Accrued PTO is paid out upon separation in accordance with California state law. For questions about your overtime eligibility or PTO balance, please contact HR.",
+        "es": "Los empleados no exentos son elegibles para pago de horas extra a 1.5 veces la tarifa regular por horas trabajadas mas de 40 en una semana laboral. Las horas extra deben ser pre-aprobadas por su supervisor. El PTO acumulado se paga al momento de la separacion de acuerdo con la ley del estado de California. Para preguntas sobre su elegibilidad de horas extra o saldo de PTO, contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "topic_leave": {
+      "id": "topic_leave",
+      "type": "select",
+      "content": {
+        "en": "Please select a leave of absence topic.",
+        "es": "Por favor seleccione un tema de licencia."
+      },
+      "options": [
+        { "label": { "en": "FMLA / Medical Leave",   "es": "FMLA / Licencia Medica"    }, "next": "q_fmla"           },
+        { "label": { "en": "Personal Leave",          "es": "Licencia Personal"          }, "next": "q_personal_leave" },
+        { "label": { "en": "Bereavement Leave",       "es": "Licencia por Duelo"         }, "next": "q_bereavement"    },
+        { "label": { "en": "PTO Balance and Accrual", "es": "Saldo y Acumulacion de PTO" }, "next": "q_pto_balance"    },
+        { "label": { "en": "Back",                    "es": "Regresar"                   }, "next": "cat_select"       }
+      ]
+    },
+
+    "q_fmla": {
+      "id": "q_fmla",
+      "type": "answer",
+      "content": {
+        "en": "Employees who have worked for LetterRide for at least 12 months and have logged at least 1,250 hours in the past year may be eligible for up to 12 weeks of unpaid, job-protected leave under the Family and Medical Leave Act (FMLA). Qualifying reasons include a serious health condition, care for an immediate family member, or the birth or adoption of a child. To request FMLA, please contact HR to receive the required paperwork, which must be completed by your healthcare provider.",
+        "es": "Los empleados que han trabajado en LetterRide durante al menos 12 meses y han registrado al menos 1,250 horas en el ultimo ano pueden ser elegibles para hasta 12 semanas de licencia no remunerada y con proteccion laboral bajo la Ley de Licencia Familiar y Medica (FMLA). Las razones calificadas incluyen una condicion de salud grave, cuidado de un familiar inmediato, o el nacimiento o adopcion de un hijo. Para solicitar FMLA, contacte a RR.HH. para recibir la documentacion requerida, que debe ser completada por su proveedor de salud."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_personal_leave": {
+      "id": "q_personal_leave",
+      "type": "answer",
+      "content": {
+        "en": "Personal leaves of absence may be granted at the discretion of management for compelling personal circumstances not covered by other leave policies. Personal leave is unpaid and does not guarantee job protection beyond what is required by law. Requests must be submitted in writing to HR and your direct supervisor at least two weeks in advance when possible. HR will review each request on a case-by-case basis.",
+        "es": "Las licencias personales pueden ser otorgadas a discrecion de la gerencia por circunstancias personales apremiantes no cubiertas por otras politicas de licencia. La licencia personal no es remunerada y no garantiza proteccion del empleo mas alla de lo requerido por la ley. Las solicitudes deben enviarse por escrito a RR.HH. y a su supervisor directo con al menos dos semanas de anticipacion cuando sea posible. RR.HH. revisara cada solicitud caso por caso."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_bereavement": {
+      "id": "q_bereavement",
+      "type": "answer",
+      "content": {
+        "en": "LetterRide provides up to 3 paid bereavement days for the loss of an immediate family member, including a spouse, child, parent, or sibling. Up to 1 paid day is provided for the loss of an extended family member such as a grandparent, aunt, uncle, or in-law. Bereavement leave should be reported to your supervisor as soon as possible. Documentation may be requested. For circumstances requiring additional time, please speak with HR.",
+        "es": "LetterRide proporciona hasta 3 dias de duelo pagados por la perdida de un familiar inmediato, incluyendo conyuge, hijo, padre o hermano. Se proporciona hasta 1 dia pagado por la perdida de un familiar extendido como abuelo, tio o familiar politico. La licencia por duelo debe notificarse a su supervisor lo antes posible. Se puede solicitar documentacion. Para circunstancias que requieran tiempo adicional, hable con RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_pto_balance": {
+      "id": "q_pto_balance",
+      "type": "answer",
+      "content": {
+        "en": "PTO accrues on a per-pay-period basis. Full-time employees in their first three years accrue 4.62 hours per bi-weekly pay period, which amounts to approximately 15 days per year. After three years, the accrual rate increases to 6.15 hours per period, approximately 20 days per year. Your current PTO balance is displayed in the payroll portal under Time Off. For discrepancies in your balance, please contact HR.",
+        "es": "El PTO se acumula por periodo de pago. Los empleados de tiempo completo en sus primeros tres anos acumulan 4.62 horas por periodo de pago quincenal, lo que equivale a aproximadamente 15 dias por ano. Despues de tres anos, la tasa de acumulacion aumenta a 6.15 horas por periodo, aproximadamente 20 dias por ano. Su saldo actual de PTO se muestra en el portal de nomina en Tiempo Libre. Para discrepancias en su saldo, contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "topic_onboarding": {
+      "id": "topic_onboarding",
+      "type": "select",
+      "content": {
+        "en": "Please select an onboarding topic.",
+        "es": "Por favor seleccione un tema de incorporacion."
+      },
+      "options": [
+        { "label": { "en": "First Day and Orientation",   "es": "Primer Dia y Orientacion"    }, "next": "q_first_day"           },
+        { "label": { "en": "Equipment and IT Setup",      "es": "Equipo y Configuracion de IT" }, "next": "q_equipment"          },
+        { "label": { "en": "Benefits Enrollment Deadline","es": "Fecha Limite de Beneficios"  }, "next": "q_benefits_deadline"   },
+        { "label": { "en": "Employee ID and Badge",       "es": "ID de Empleado y Credencial" }, "next": "q_id_badge"            },
+        { "label": { "en": "Background Check Status",     "es": "Estado de Verificacion"      }, "next": "q_background_check"    },
+        { "label": { "en": "Back",                        "es": "Regresar"                    }, "next": "cat_select"            }
+      ]
+    },
+
+    "q_first_day": {
+      "id": "q_first_day",
+      "type": "answer",
+      "content": {
+        "en": "On your first day, please report to the main reception desk at your assigned start time. You will be greeted by HR and given a brief orientation covering company policies, safety procedures, and a tour of the facility. Please bring two forms of government-issued identification for I-9 verification. If you have not received your start time or location, please contact HR as soon as possible.",
+        "es": "En su primer dia, preséntese en la recepcion principal a la hora de inicio asignada. Sera recibido por RR.HH. y se le dara una breve orientacion sobre las politicas de la empresa, procedimientos de seguridad y un recorrido por las instalaciones. Traiga dos formas de identificacion emitidas por el gobierno para la verificacion del formulario I-9. Si no ha recibido su hora o ubicacion de inicio, contacte a RR.HH. lo antes posible."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_equipment": {
+      "id": "q_equipment",
+      "type": "answer",
+      "content": {
+        "en": "Your equipment request is coordinated by IT prior to your start date. Your laptop, access credentials, and any role-specific tools should be ready on your first day. If equipment is missing or not functioning, please contact the IT Help Desk directly. For system access issues such as login problems or missing application permissions, your manager should submit a ticket to IT on your behalf.",
+        "es": "Su solicitud de equipo es coordinada por IT antes de su fecha de inicio. Su laptop, credenciales de acceso y cualquier herramienta especifica de su rol deberian estar listas en su primer dia. Si falta equipo o no funciona correctamente, contacte directamente al Centro de Ayuda de IT. Para problemas de acceso al sistema como problemas de inicio de sesion o permisos de aplicaciones faltantes, su gerente debe enviar un ticket a IT en su nombre."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_benefits_deadline": {
+      "id": "q_benefits_deadline",
+      "type": "answer",
+      "content": {
+        "en": "As a new hire, you have 30 days from your start date to enroll in benefits. Elections made during this window are effective on the first of the month following your start date, or immediately if you started on the first of the month. If you miss the 30-day window, you will not be able to enroll until the next open enrollment period in November unless you experience a qualifying life event. Please do not delay your enrollment elections.",
+        "es": "Como nuevo empleado, tiene 30 dias a partir de su fecha de inicio para inscribirse en los beneficios. Las elecciones realizadas durante este periodo son efectivas el primer dia del mes siguiente a su fecha de inicio, o de inmediato si comenzo el primer dia del mes. Si pierde el periodo de 30 dias, no podra inscribirse hasta el proximo periodo de inscripcion abierta en noviembre, a menos que experimente un evento de vida calificado. Por favor no demore sus elecciones de inscripcion."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_id_badge": {
+      "id": "q_id_badge",
+      "type": "answer",
+      "content": {
+        "en": "Your employee ID is assigned during onboarding and will appear in your offer letter and payroll portal profile. Your physical access badge will be issued by HR on your first day after completing your I-9 verification. If your badge is lost or damaged, report it to HR immediately so it can be deactivated and a replacement can be issued. There is a replacement fee for lost badges.",
+        "es": "Su numero de empleado se asigna durante la incorporacion y aparecera en su carta de oferta y en su perfil del portal de nomina. Su credencial de acceso fisico sera emitida por RR.HH. en su primer dia despues de completar la verificacion del formulario I-9. Si su credencial se pierde o dana, reportelo a RR.HH. inmediatamente para que pueda ser desactivada y se emita un reemplazo. Hay un cargo por reemplazo de credenciales perdidas."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_background_check": {
+      "id": "q_background_check",
+      "type": "answer",
+      "content": {
+        "en": "Background checks are conducted through our third-party screening provider. You should have received an email invitation to complete the process. Results are typically returned within 3 to 5 business days. If your start date is approaching and your background check has not yet cleared, please contact HR directly. Do not contact the screening provider yourself, as all inquiries must go through HR.",
+        "es": "Las verificaciones de antecedentes se realizan a traves de nuestro proveedor externo de seleccion. Deberia haber recibido una invitacion por correo electronico para completar el proceso. Los resultados generalmente se devuelven dentro de 3 a 5 dias habiles. Si su fecha de inicio se acerca y su verificacion de antecedentes aun no ha sido aprobada, contacte a RR.HH. directamente. No contacte al proveedor de seleccion por su cuenta, ya que todas las consultas deben pasar por RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "topic_other": {
+      "id": "topic_other",
+      "type": "select",
+      "content": {
+        "en": "Please select a topic.",
+        "es": "Por favor seleccione un tema."
+      },
+      "options": [
+        { "label": { "en": "HR Contact Information",    "es": "Informacion de Contacto de RR.HH." }, "next": "q_hr_contact"     },
+        { "label": { "en": "Employee Handbook",         "es": "Manual del Empleado"               }, "next": "q_handbook"       },
+        { "label": { "en": "Employee Records Request",  "es": "Solicitud de Expediente"           }, "next": "q_records"        },
+        { "label": { "en": "Workplace Conduct Policy",  "es": "Politica de Conducta Laboral"      }, "next": "q_conduct"        },
+        { "label": { "en": "Back",                      "es": "Regresar"                          }, "next": "cat_select"       }
+      ]
+    },
+
+    "q_hr_contact": {
+      "id": "q_hr_contact",
+      "type": "answer",
+      "content": {
+        "en": "The HR department is available Monday through Friday, 8:00 AM to 4:00 PM Pacific Time. You may reach us through this live chat during business hours, or by emailing hr@letterride.com. For urgent matters outside of business hours, please leave a detailed voicemail and we will return your call on the next business day. HR is located in Suite 200 of the main administrative building.",
+        "es": "El departamento de RR.HH. esta disponible de lunes a viernes, de 8:00 AM a 4:00 PM, hora del Pacifico. Puede comunicarse con nosotros a traves de este chat en vivo durante el horario laboral, o enviando un correo electronico a hr@letterride.com. Para asuntos urgentes fuera del horario laboral, deje un mensaje de voz detallado y nos comunicaremos con usted el siguiente dia habil. RR.HH. se encuentra en la Suite 200 del edificio administrativo principal."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_handbook": {
+      "id": "q_handbook",
+      "type": "answer",
+      "content": {
+        "en": "The LetterRide Employee Handbook is available on the employee intranet under the HR Documents section. It covers company policies, code of conduct, benefits summaries, leave policies, and workplace safety guidelines. All employees are required to review and acknowledge the handbook annually. If you cannot access the intranet or need a printed copy, please contact HR.",
+        "es": "El Manual del Empleado de LetterRide esta disponible en la intranet para empleados en la seccion de Documentos de RR.HH. Cubre politicas de la empresa, codigo de conducta, resumenes de beneficios, politicas de licencia y pautas de seguridad en el lugar de trabajo. Todos los empleados deben revisar y reconocer el manual anualmente. Si no puede acceder a la intranet o necesita una copia impresa, contacte a RR.HH."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_records": {
+      "id": "q_records",
+      "type": "answer",
+      "content": {
+        "en": "Employees may request a copy of their personnel file by submitting a written request to HR. Records requests are fulfilled within 10 business days in compliance with applicable state law. The request must include your full name, employee ID, and the specific documents you are requesting. Employment verification letters for mortgage applications, rental agreements, or other purposes can also be requested from HR with 3 to 5 business days advance notice.",
+        "es": "Los empleados pueden solicitar una copia de su expediente de personal enviando una solicitud por escrito a RR.HH. Las solicitudes de expedientes se cumplen dentro de 10 dias habiles de conformidad con la ley estatal aplicable. La solicitud debe incluir su nombre completo, numero de empleado y los documentos especificos que solicita. Las cartas de verificacion de empleo para solicitudes de hipoteca, contratos de arrendamiento u otros propositos tambien pueden solicitarse a RR.HH. con 3 a 5 dias habiles de anticipacion."
+      },
+      "next": "resolution_check"
+    },
+
+    "q_conduct": {
+      "id": "q_conduct",
+      "type": "answer",
+      "content": {
+        "en": "LetterRide is committed to maintaining a professional and respectful workplace for all employees. Our workplace conduct policy prohibits harassment, discrimination, and retaliation in any form. Employees who experience or witness a policy violation are encouraged to report it to HR or through the anonymous reporting hotline listed in the Employee Handbook. All reports are treated confidentially and investigated promptly. Retaliation against any employee who reports in good faith is strictly prohibited.",
+        "es": "LetterRide esta comprometida a mantener un lugar de trabajo profesional y respetuoso para todos los empleados. Nuestra politica de conducta laboral prohibe el acoso, la discriminacion y las represalias en cualquier forma. Se alienta a los empleados que experimenten o sean testigos de una violacion de politicas a reportarla a RR.HH. o a traves de la linea de reporte anonima que figura en el Manual del Empleado. Todos los informes se tratan con confidencialidad y se investigan con prontitud. Las represalias contra cualquier empleado que informe de buena fe estan estrictamente prohibidas."
+      },
+      "next": "resolution_check"
+    },
+
+    "resolution_check": {
+      "id": "resolution_check",
+      "type": "resolution",
+      "content": {
+        "en": "Did this answer resolve your question?",
+        "es": "Esta respuesta resolvio su pregunta?"
+      },
+      "options": [
+        { "label": { "en": "Yes, thank you",        "es": "Si, gracias"                }, "next": "end_resolved"    },
+        { "label": { "en": "No, I need more help",  "es": "No, necesito mas ayuda"     }, "next": "live_agent_gate" }
+      ]
+    },
+
+    "live_agent_gate": {
+      "id": "live_agent_gate",
+      "type": "gate",
+      "onOpen":   "intake_form",
+      "onClosed": "end_offline"
+    },
+
+    "intake_form": {
+      "id": "intake_form",
+      "type": "form",
+      "content": {
+        "en": "Please provide the following information to connect with an HR representative. An agent will be with you shortly.",
+        "es": "Por favor proporcione la siguiente informacion para conectarse con un representante de RR.HH. Un agente estara con usted en breve."
+      },
+      "fields": [
+        {
+          "name": "firstName",
+          "label": { "en": "First Name", "es": "Nombre" },
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "lastName",
+          "label": { "en": "Last Name", "es": "Apellido" },
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "employeeId",
+          "label": { "en": "Employee ID", "es": "Numero de Empleado" },
+          "type": "text",
+          "required": true
+        }
+      ],
+      "submitEndpoint": "/api/intake/submit",
+      "next": "end_queued"
+    },
+
+    "end_resolved": {
+      "id": "end_resolved",
+      "type": "end",
+      "content": {
+        "en": "We are glad we could assist you. If you have additional questions in the future, please do not hesitate to reach out. Have a great day.",
+        "es": "Nos alegra haber podido ayudarle. Si tiene preguntas adicionales en el futuro, no dude en comunicarse. Que tenga un excelente dia."
+      }
+    },
+
+    "end_offline": {
+      "id": "end_offline",
+      "type": "end",
+      "content": {
+        "en": "Our HR team is currently unavailable. Live agent support is available Monday through Friday, 8:00 AM to 4:00 PM Pacific Time. Please try again during business hours, or send your question to hr@letterride.com and we will respond on the next business day.",
+        "es": "Nuestro equipo de RR.HH. no esta disponible en este momento. El soporte en vivo esta disponible de lunes a viernes, de 8:00 AM a 4:00 PM, hora del Pacifico. Por favor intente de nuevo en horario laboral, o envie su pregunta a hr@letterride.com y responderemos el siguiente dia habil."
+      }
+    },
+
+    "end_queued": {
+      "id": "end_queued",
+      "type": "end",
+      "content": {
+        "en": "You have been added to the queue. An HR representative will be with you shortly. Please remain on this page. Your position in the queue will be updated as agents become available.",
+        "es": "Ha sido agregado a la cola de espera. Un representante de RR.HH. estara con usted en breve. Por favor permanezca en esta pagina. Su posicion en la cola se actualizara a medida que los agentes esten disponibles."
+      }
+    }
+
+  }
+}
