@@ -35,6 +35,59 @@ const toastContainer = document.createElement('div');
 toastContainer.id = 'toast-container';
 document.body.appendChild(toastContainer);
 
+// ── Notification helpers ───────────────────────────────────────────────────
+const ORIGINAL_TITLE = document.title;
+let _tabFlashInterval = null;
+let _pendingCount = 0;
+
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Two-tone chime: high note then slightly lower note
+    [[880, 0, 0.15], [660, 0.18, 0.22]].forEach(([freq, startAt, endAt]) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ctx.currentTime + startAt);
+      gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + startAt + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + endAt);
+      osc.start(ctx.currentTime + startAt);
+      osc.stop(ctx.currentTime + endAt);
+    });
+  } catch { /* AudioContext blocked; skip */ }
+}
+
+function startTabFlash(count) {
+  _pendingCount = count;
+  if (_tabFlashInterval) return; // already flashing
+  let toggle = true;
+  document.title = `(${count}) New Request — HR Dashboard`;
+  _tabFlashInterval = setInterval(() => {
+    document.title = toggle
+      ? `(${_pendingCount}) New Request — HR Dashboard`
+      : ORIGINAL_TITLE;
+    toggle = !toggle;
+  }, 1200);
+}
+
+function stopTabFlash() {
+  if (_tabFlashInterval) {
+    clearInterval(_tabFlashInterval);
+    _tabFlashInterval = null;
+  }
+  document.title = ORIGINAL_TITLE;
+  _pendingCount = 0;
+}
+
+// Stop flashing when the tab is focused
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) stopTabFlash();
+});
+window.addEventListener('focus', stopTabFlash);
+
 // ── Utility ───────────────────────────────────────────────────────────────
 function formatTime(ts) {
   return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -181,6 +234,10 @@ function handleIncomingChat(msg) {
     });
     renderQueue();
     highlightCard(msg.sessionToken);
+    playNotificationSound();
+    if (document.hidden || !document.hasFocus()) {
+      startTabFlash(state.queue.size);
+    }
   }
   toast(`New request: ${msg.name}`);
 }
@@ -207,6 +264,7 @@ function renderQueue() {
 
   if (count === 0) {
     queueEmpty.hidden = false;
+    stopTabFlash();
     return;
   }
 
