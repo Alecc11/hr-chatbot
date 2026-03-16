@@ -266,6 +266,7 @@ function renderForm(node) {
       }
 
       // Disable the form permanently — session created
+      submitBtn.textContent = i18n.getLang() === 'es' ? 'Enviado' : 'Submitted';
       formEl.querySelectorAll('input, button').forEach((el) => el.disabled = true);
       formWrap.style.opacity = '0.6';
 
