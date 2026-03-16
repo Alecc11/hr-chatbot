@@ -50,7 +50,13 @@ app.use(cookieParser());
 
 // ─────────────────────────────────────────────
 // 6. Static files (widget bundle)
+// Widget bundle must be loadable cross-origin (embedded on letterride.com).
+// Override Helmet's Cross-Origin-Resource-Policy for this file only.
 // ─────────────────────────────────────────────
+app.use('/widget.bundle.js', (_req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ─────────────────────────────────────────────
