@@ -2,10 +2,11 @@
 
 // ── State ─────────────────────────────────────────────────────────────────
 const state = {
-  username:     null,
-  ws:           null,
-  activeRoomId: null,
-  queue:        new Map(),   // sessionToken → { name, employeeId, timestamp }
+  username:      null,
+  ws:            null,
+  viewingRoomId: null,   // which chat is currently displayed in the main panel
+  chats:         new Map(), // roomId → { roomId, visitorName, employeeId, category, topic, lang, messages[], unread, ended }
+  queue:         new Map(), // sessionToken → { name, employeeId, timestamp }
 };
 
 // ── DOM references ────────────────────────────────────────────────────────
@@ -18,6 +19,9 @@ const logoutBtn      = document.getElementById('logout-btn');
 const headerRepName  = document.getElementById('header-rep-name');
 const wsDot          = document.getElementById('ws-status-dot');
 const wsLabel        = document.getElementById('ws-status-label');
+const activeChatsList = document.getElementById('active-chats-list');
+const activeEmpty    = document.getElementById('active-empty');
+const activeCount    = document.getElementById('active-count');
 const queueList      = document.getElementById('queue-list');
 const queueEmpty     = document.getElementById('queue-empty');
 const queueCount     = document.getElementById('queue-count');
@@ -43,7 +47,6 @@ let _pendingCount = 0;
 function playNotificationSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // Two-tone chime: high note then slightly lower note
     [[880, 0, 0.15], [660, 0.18, 0.22]].forEach(([freq, startAt, endAt]) => {
       const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -62,7 +65,7 @@ function playNotificationSound() {
 
 function startTabFlash(count) {
   _pendingCount = count;
-  if (_tabFlashInterval) return; // already flashing
+  if (_tabFlashInterval) return;
   let toggle = true;
   document.title = `(${count}) New Request — HR Dashboard`;
   _tabFlashInterval = setInterval(() => {
@@ -82,7 +85,6 @@ function stopTabFlash() {
   _pendingCount = 0;
 }
 
-// Stop flashing when the tab is focused
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) stopTabFlash();
 });
@@ -95,7 +97,7 @@ function formatTime(ts) {
 
 function timeAgo(ts) {
   const diff = Math.floor((Date.now() - ts) / 1000);
-  if (diff < 60)  return `${diff}s ago`;
+  if (diff < 60)   return `${diff}s ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   return `${Math.floor(diff / 3600)}h ago`;
 }
@@ -115,6 +117,12 @@ function setWsStatus(status) {
     disconnected: 'Disconnected',
     connecting:   'Connecting...',
   }[status] || status;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────
@@ -173,7 +181,6 @@ function connectWS() {
 
   ws.addEventListener('open', () => {
     setWsStatus('connected');
-    console.log('[WS] Rep connected');
   });
 
   ws.addEventListener('message', (event) => {
@@ -185,7 +192,6 @@ function connectWS() {
   ws.addEventListener('close', () => {
     setWsStatus('disconnected');
     toast('Connection lost. Attempting to reconnect...');
-    // Reconnect after 3 seconds
     setTimeout(connectWS, 3000);
   });
 
@@ -203,19 +209,18 @@ function wsSend(msg) {
 // ── Server message dispatch ───────────────────────────────────────────────
 function handleServerMessage(msg) {
   switch (msg.type) {
-    case 'queue_update':   handleQueueUpdate(msg.queue);       break;
-    case 'incoming_chat':  handleIncomingChat(msg);            break;
-    case 'claimed':        handleClaimed(msg);                 break;
-    case 'claim_ack':      handleClaimAck(msg);                break;
-    case 'claim_denied':   handleClaimDenied(msg);             break;
-    case 'visitor_message':   appendMessage('visitor', msg.text, msg.timestamp); break;
-    case 'visitor_disconnected': handleVisitorDisconnected(msg); break;
+    case 'queue_update':        handleQueueUpdate(msg.queue);                              break;
+    case 'incoming_chat':       handleIncomingChat(msg);                                   break;
+    case 'claimed':             handleClaimed(msg);                                        break;
+    case 'claim_ack':           handleClaimAck(msg);                                       break;
+    case 'claim_denied':        handleClaimDenied();                                       break;
+    case 'visitor_message':     appendMessage(msg.roomId, 'visitor', msg.text, msg.timestamp); break;
+    case 'visitor_disconnected': handleVisitorDisconnected(msg);                           break;
   }
 }
 
 // ── Queue management ──────────────────────────────────────────────────────
 function handleQueueUpdate(queue) {
-  // Rebuild internal map
   state.queue.clear();
   for (const item of queue) {
     state.queue.set(item.sessionToken, item);
@@ -224,7 +229,6 @@ function handleQueueUpdate(queue) {
 }
 
 function handleIncomingChat(msg) {
-  // Add to map if not present (queue_update may follow, but this animates the new card)
   if (!state.queue.has(msg.sessionToken)) {
     state.queue.set(msg.sessionToken, {
       sessionToken: msg.sessionToken,
@@ -243,7 +247,6 @@ function handleIncomingChat(msg) {
 }
 
 function handleClaimed(msg) {
-  // Remove card from queue (either claimed by us via claim_ack, or by another rep)
   if (state.queue.has(msg.sessionToken)) {
     fadeOutCard(msg.sessionToken, () => {
       state.queue.delete(msg.sessionToken);
@@ -259,7 +262,6 @@ function renderQueue() {
   queueCount.textContent = count;
   queueCount.className   = `queue-badge${count === 0 ? ' zero' : ''}`;
 
-  // Remove existing cards (preserve empty placeholder)
   queueList.querySelectorAll('.queue-card').forEach(el => el.remove());
 
   if (count === 0) {
@@ -269,7 +271,6 @@ function renderQueue() {
   }
 
   queueEmpty.hidden = true;
-  const inChat = !!state.activeRoomId;
 
   for (const item of items) {
     const card = document.createElement('div');
@@ -281,23 +282,17 @@ function renderQueue() {
       <div class="queue-card-meta">Employee ID: ${escHtml(item.employeeId)}</div>
       <div class="queue-card-footer">
         <span class="queue-card-time">${timeAgo(item.timestamp)}</span>
-        <button class="btn btn-accept"
-          data-token="${escHtml(item.sessionToken)}"
-          ${inChat ? 'disabled title="Finish your current chat before accepting a new one."' : ''}>
-          Accept
-        </button>
+        <button class="btn btn-accept" data-token="${escHtml(item.sessionToken)}">Accept</button>
       </div>
     `;
 
     card.querySelector('.btn-accept').addEventListener('click', (e) => {
-      const token = e.currentTarget.dataset.token;
-      claimSession(token);
+      claimSession(e.currentTarget.dataset.token);
     });
 
     queueList.appendChild(card);
   }
 
-  // Refresh time-ago labels every 30 seconds
   clearTimeout(renderQueue._timer);
   renderQueue._timer = setTimeout(renderQueue, 30_000);
 }
@@ -315,7 +310,6 @@ function fadeOutCard(token, callback) {
   if (card) {
     card.classList.add('fading-out');
     card.addEventListener('transitionend', () => { card.remove(); callback(); }, { once: true });
-    // Fallback if transitionend doesn't fire
     setTimeout(callback, 400);
   } else {
     callback();
@@ -324,106 +318,214 @@ function fadeOutCard(token, callback) {
 
 // ── Claim ─────────────────────────────────────────────────────────────────
 function claimSession(sessionToken) {
-  if (state.activeRoomId) return; // already in a chat
   wsSend({ type: 'claim', sessionToken });
-
-  // Disable all accept buttons while we wait for the server response
+  // Briefly disable all accept buttons to prevent double-clicks
   queueList.querySelectorAll('.btn-accept').forEach(btn => btn.disabled = true);
+  setTimeout(() => queueList.querySelectorAll('.btn-accept').forEach(btn => btn.disabled = false), 1500);
 }
 
 function handleClaimAck(msg) {
-  state.activeRoomId = msg.roomId;
-  openChatPanel(msg.visitorName, msg.employeeId, msg.category, msg.topic, msg.lang);
-  toast(`You are now connected with ${msg.visitorName}.`);
+  const chat = {
+    roomId:      msg.roomId,
+    visitorName: msg.visitorName,
+    employeeId:  msg.employeeId,
+    category:    msg.category || '',
+    topic:       msg.topic    || '',
+    lang:        msg.lang     || 'en',
+    messages:    [{ from: 'system', text: `Session started with ${msg.visitorName}.`, timestamp: Date.now() }],
+    unread:      0,
+    ended:       false,
+  };
+  state.chats.set(msg.roomId, chat);
+  renderChats();
+  switchToChat(msg.roomId);
+  toast(`Connected with ${msg.visitorName}.`);
 }
 
-function handleClaimDenied(msg) {
+function handleClaimDenied() {
   toast('This request was already accepted by another agent.');
-  // Re-enable accept buttons on remaining cards
   renderQueue();
 }
 
-// ── Chat panel ────────────────────────────────────────────────────────────
-function openChatPanel(visitorName, employeeId, category, topic, lang) {
+// ── Active chats sidebar ──────────────────────────────────────────────────
+function renderChats() {
+  activeChatsList.querySelectorAll('.active-chat-card').forEach(el => el.remove());
+
+  const count = state.chats.size;
+  activeCount.textContent = count;
+  activeCount.className   = `queue-badge${count === 0 ? ' zero' : ''}`;
+
+  if (count === 0) {
+    activeEmpty.hidden = false;
+    return;
+  }
+
+  activeEmpty.hidden = true;
+
+  for (const chat of state.chats.values()) {
+    const isViewing = chat.roomId === state.viewingRoomId;
+
+    const card = document.createElement('div');
+    card.className = [
+      'active-chat-card',
+      isViewing ? 'active' : '',
+      chat.ended ? 'ended' : '',
+    ].filter(Boolean).join(' ');
+    card.dataset.roomId = chat.roomId;
+
+    const unreadBadge = chat.unread > 0
+      ? `<span class="unread-badge">${chat.unread}</span>`
+      : '';
+
+    const subLine = chat.category
+      ? `<div class="active-chat-sub">${escHtml(chat.category)}${chat.topic ? ` › ${escHtml(chat.topic)}` : ''}</div>`
+      : '';
+
+    const endedLine = chat.ended
+      ? `<div class="active-chat-ended">Session ended — click to close</div>`
+      : '';
+
+    card.innerHTML = `
+      <div class="active-chat-name">${escHtml(chat.visitorName)}${unreadBadge}</div>
+      ${subLine}
+      ${endedLine}
+    `;
+
+    card.addEventListener('click', () => switchToChat(chat.roomId));
+    activeChatsList.appendChild(card);
+  }
+}
+
+// ── Switch active chat view ───────────────────────────────────────────────
+function switchToChat(roomId) {
+  const chat = state.chats.get(roomId);
+  if (!chat) return;
+
+  state.viewingRoomId = roomId;
+  chat.unread = 0;
+
   chatEmpty.hidden  = true;
   chatActive.hidden = false;
 
-  chatVisName.textContent = visitorName;
-  chatVisMeta.textContent = `Employee ID: ${employeeId}`;
+  chatVisName.textContent = chat.visitorName;
+  chatVisMeta.textContent = `Employee ID: ${chat.employeeId}`;
 
+  // Re-render all messages from scratch
   chatMessages.innerHTML = '';
 
-  // Show visitor context banner if we have bot-flow data
-  if (category || topic) {
-    const langLabel = lang === 'es' ? 'Spanish' : 'English';
+  // Context banner
+  if (chat.category || chat.topic) {
+    const langLabel = chat.lang === 'es' ? 'Spanish' : 'English';
     const banner = document.createElement('div');
     banner.className = 'context-banner';
     banner.innerHTML = `
       <div class="context-banner-title">Visitor Context</div>
       <div class="context-banner-rows">
         <div class="context-banner-row"><span class="context-label">Language</span>${escHtml(langLabel)}</div>
-        ${category ? `<div class="context-banner-row"><span class="context-label">Category</span>${escHtml(category)}</div>` : ''}
-        ${topic    ? `<div class="context-banner-row"><span class="context-label">Topic</span>${escHtml(topic)}</div>` : ''}
+        ${chat.category ? `<div class="context-banner-row"><span class="context-label">Category</span>${escHtml(chat.category)}</div>` : ''}
+        ${chat.topic    ? `<div class="context-banner-row"><span class="context-label">Topic</span>${escHtml(chat.topic)}</div>` : ''}
       </div>
       <div class="context-banner-note">Bot could not fully resolve this — visitor requested a live agent.</div>
     `;
     chatMessages.appendChild(banner);
   }
 
-  appendSystemMessage(`Session started with ${visitorName}.`);
-  chatInput.focus();
+  // Replay stored messages
+  for (const m of chat.messages) {
+    if (m.from === 'system') {
+      renderSystemMsgDOM(m.text);
+    } else {
+      renderMsgDOM(m.from, m.text, m.timestamp, chat.visitorName);
+    }
+  }
 
-  // Disable accept buttons on queue while in chat
-  renderQueue();
+  // Input state
+  const ended = chat.ended;
+  chatInput.disabled = ended;
+  sendBtn.disabled   = ended;
+  endChatBtn.textContent = ended ? 'Close' : 'End Chat';
+
+  // Highlight correct sidebar card
+  renderChats();
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  if (!ended) chatInput.focus();
 }
 
-function closeChatPanel() {
-  chatEmpty.hidden  = false;
-  chatActive.hidden = true;
-  state.activeRoomId = null;
-  chatMessages.innerHTML = '';
-  renderQueue();  // re-enable accept buttons
+// ── Message rendering ─────────────────────────────────────────────────────
+function appendMessage(roomId, from, text, timestamp) {
+  const chat = state.chats.get(roomId);
+  if (!chat) return;
+
+  const msg = { from, text, timestamp: timestamp || Date.now() };
+  chat.messages.push(msg);
+
+  if (roomId === state.viewingRoomId) {
+    renderMsgDOM(from, text, msg.timestamp, chat.visitorName);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  } else {
+    chat.unread++;
+    renderChats();
+  }
 }
 
-function appendMessage(from, text, timestamp) {
+function renderMsgDOM(from, text, timestamp, visitorName) {
+  const label = from === 'visitor' ? (visitorName || 'Visitor') : 'You';
   const row = document.createElement('div');
   row.className = `message-row from-${from}`;
-
-  const label = from === 'visitor'
-    ? (chatVisName.textContent || 'Visitor')
-    : 'You';
-
   row.innerHTML = `
     <div class="message-label">${escHtml(label)}</div>
     <div class="message-bubble">${escHtml(text)}</div>
-    <div class="message-time">${formatTime(timestamp || Date.now())}</div>
+    <div class="message-time">${formatTime(timestamp)}</div>
   `;
-
   chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function appendSystemMessage(text) {
+function renderSystemMsgDOM(text) {
   const el = document.createElement('div');
   el.className = 'system-message';
   el.textContent = text;
   chatMessages.appendChild(el);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function handleVisitorDisconnected() {
-  appendSystemMessage('The visitor has disconnected.');
-  state.activeRoomId = null;
-  endChatBtn.textContent = 'Close';
+function appendSystemToChat(roomId, text) {
+  const chat = state.chats.get(roomId);
+  if (!chat) return;
+  const msg = { from: 'system', text, timestamp: Date.now() };
+  chat.messages.push(msg);
+  if (roomId === state.viewingRoomId) {
+    renderSystemMsgDOM(text);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+// ── Visitor disconnected ──────────────────────────────────────────────────
+function handleVisitorDisconnected(msg) {
+  const chat = state.chats.get(msg.roomId);
+  if (!chat) return;
+
+  chat.ended = true;
+  appendSystemToChat(msg.roomId, 'The visitor has disconnected.');
+
+  if (msg.roomId === state.viewingRoomId) {
+    chatInput.disabled = true;
+    sendBtn.disabled   = true;
+    endChatBtn.textContent = 'Close';
+  }
+
+  renderChats();
 }
 
 // ── Send message ──────────────────────────────────────────────────────────
 function sendMessage() {
   const text = chatInput.value.trim();
-  if (!text || !state.activeRoomId) return;
+  if (!text || !state.viewingRoomId) return;
 
-  wsSend({ type: 'message', roomId: state.activeRoomId, text });
-  appendMessage('rep', text, Date.now());
+  const chat = state.chats.get(state.viewingRoomId);
+  if (!chat || chat.ended) return;
+
+  wsSend({ type: 'message', roomId: state.viewingRoomId, text });
+  appendMessage(state.viewingRoomId, 'rep', text, Date.now());
   chatInput.value = '';
   chatInput.style.height = 'auto';
   chatInput.focus();
@@ -432,25 +534,46 @@ function sendMessage() {
 sendBtn.addEventListener('click', sendMessage);
 
 chatInput.addEventListener('keydown', (e) => {
-  // Send on Enter (not Shift+Enter which adds a newline)
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     sendMessage();
   }
 });
 
-// Auto-grow textarea
 chatInput.addEventListener('input', () => {
   chatInput.style.height = 'auto';
   chatInput.style.height = `${Math.min(chatInput.scrollHeight, 120)}px`;
 });
 
-// ── End chat ──────────────────────────────────────────────────────────────
+// ── End / close chat ──────────────────────────────────────────────────────
 endChatBtn.addEventListener('click', () => {
-  if (state.activeRoomId) {
-    wsSend({ type: 'close_chat', roomId: state.activeRoomId });
+  const roomId = state.viewingRoomId;
+  if (!roomId) return;
+
+  const chat = state.chats.get(roomId);
+  if (!chat) return;
+
+  if (!chat.ended) {
+    wsSend({ type: 'close_chat', roomId });
   }
-  closeChatPanel();
+
+  state.chats.delete(roomId);
+  state.viewingRoomId = null;
+
+  // Switch to another open chat, or show empty state
+  const remaining = [...state.chats.values()].filter(c => !c.ended);
+  const any       = [...state.chats.keys()];
+
+  if (remaining.length > 0) {
+    switchToChat(remaining[0].roomId);
+  } else if (any.length > 0) {
+    switchToChat(any[0]);
+  } else {
+    chatEmpty.hidden  = false;
+    chatActive.hidden = true;
+    renderChats();
+  }
+
   endChatBtn.textContent = 'End Chat';
 });
 
@@ -460,13 +583,3 @@ logoutBtn.addEventListener('click', async () => {
   await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
   location.reload();
 });
-
-// ── Security: HTML escaping ───────────────────────────────────────────────
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}

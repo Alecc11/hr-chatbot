@@ -59,18 +59,36 @@
 
     <div class="dashboard-body">
 
-      <!-- Queue Panel -->
-      <aside class="queue-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Incoming Requests</h2>
-          <span class="queue-badge" id="queue-count">0</span>
-        </div>
-        <div id="queue-list" class="queue-list">
-          <div class="queue-empty" id="queue-empty">
-            <div class="queue-empty-icon">—</div>
-            <p>No pending requests.</p>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+
+        <!-- Active Chats Section -->
+        <div class="sidebar-section sidebar-section--active">
+          <div class="panel-header">
+            <h2 class="panel-title">Active Chats</h2>
+            <span class="queue-badge zero" id="active-count">0</span>
+          </div>
+          <div id="active-chats-list" class="active-chats-list">
+            <div class="queue-empty" id="active-empty">
+              <p>No active chats.</p>
+            </div>
           </div>
         </div>
+
+        <!-- Queue Section -->
+        <div class="sidebar-section sidebar-section--queue">
+          <div class="panel-header">
+            <h2 class="panel-title">Incoming Requests</h2>
+            <span class="queue-badge" id="queue-count">0</span>
+          </div>
+          <div id="queue-list" class="queue-list">
+            <div class="queue-empty" id="queue-empty">
+              <div class="queue-empty-icon">—</div>
+              <p>No pending requests.</p>
+            </div>
+          </div>
+        </div>
+
       </aside>
 
       <!-- Chat Panel -->
