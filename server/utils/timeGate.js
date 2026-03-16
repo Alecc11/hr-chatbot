@@ -13,6 +13,9 @@ const OPEN_DAYS   = [1, 2, 3, 4, 5]; // Monday–Friday (ISO weekday)
  * Luxon handles PST/PDT transitions automatically.
  */
 function isOpen() {
+  // Allow bypassing the time gate in development for local testing
+  if (process.env.SKIP_TIME_GATE === 'true') return true;
+
   const now = DateTime.now().setZone(ZONE);
   return (
     OPEN_DAYS.includes(now.weekday) &&

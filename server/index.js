@@ -5,16 +5,20 @@ require('./config/env');
 
 const http = require('http');
 const app  = require('./app');
+const { handleUpgrade } = require('./ws/wsServer');
 const { PORT } = require('./config/env');
 
 const server = http.createServer(app);
 
+// Attach WebSocket upgrade handler to the HTTP server
+handleUpgrade(server);
+
 server.listen(PORT, () => {
   console.log(JSON.stringify({
-    event:   'server_start',
-    port:    PORT,
-    env:     process.env.NODE_ENV,
-    time:    new Date().toISOString(),
+    event: 'server_start',
+    port:  PORT,
+    env:   process.env.NODE_ENV,
+    time:  new Date().toISOString(),
   }));
 });
 
@@ -24,4 +28,4 @@ process.on('SIGTERM', () => {
   server.close(() => process.exit(0));
 });
 
-module.exports = server;  // exported for WS attachment in Phase 5
+module.exports = server;
