@@ -49,14 +49,17 @@ app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 app.use(cookieParser());
 
 // ─────────────────────────────────────────────
-// 6. Static files (widget bundle)
-// Widget bundle must be loadable cross-origin (embedded on letterride.com).
-// Override Helmet's Cross-Origin-Resource-Policy for this file only.
+// 6. Widget bundle — served explicitly so headers are guaranteed.
+// The widget is public and must be embeddable on any origin.
+// Access-Control-Allow-Origin: * allows the script to load cross-origin.
+// Cross-Origin-Resource-Policy: cross-origin overrides Helmet's same-origin default.
 // ─────────────────────────────────────────────
-app.use('/widget.bundle.js', (_req, res, next) => {
+app.get('/widget.bundle.js', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  next();
+  res.sendFile(path.join(__dirname, '..', 'public', 'widget.bundle.js'));
 });
+
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ─────────────────────────────────────────────
