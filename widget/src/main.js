@@ -83,7 +83,7 @@ function buildWidget() {
       ></textarea>
       <button class="hw-send-btn">Send</button>
     </div>
-    <div class="hw-footer">LetterRide HR &mdash; Confidential</div>
+    <div class="hw-footer">Beta &mdash; Not official HR policy &nbsp;&bull;&nbsp; LetterRide HR</div>
   `;
 
   shadow.appendChild(win);

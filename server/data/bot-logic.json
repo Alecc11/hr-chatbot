@@ -1,7 +1,17 @@
 {
   "version": "1.0.0",
-  "initialNode": "lang_select",
+  "initialNode": "disclaimer",
   "nodes": {
+
+    "disclaimer": {
+      "id": "disclaimer",
+      "type": "answer",
+      "content": {
+        "en": "BETA NOTICE: This HR support tool is still in development. The information provided is for general guidance only and does not represent official LetterRide HR policy. For official HR matters please contact hr@letterride.com directly.",
+        "es": "AVISO BETA: Esta herramienta de soporte de RR.HH. esta aun en desarrollo. La informacion proporcionada es solo orientacion general y no representa la politica oficial de RR.HH. de LetterRide. Para asuntos oficiales de RR.HH. contacte a hr@letterride.com directamente."
+      },
+      "next": "lang_select"
+    },
 
     "lang_select": {
       "id": "lang_select",
