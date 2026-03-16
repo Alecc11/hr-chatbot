@@ -18,8 +18,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc:  ["'self'"],
-      scriptSrc:   ["'self'", 'https://www.letterride.com'],
-      connectSrc:  ["'self'", 'https://www.letterride.com', 'wss:'],
+      scriptSrc:   ["'self'", 'https://www.letterride.com', 'https://letterride.com'],
+      connectSrc:  ["'self'", 'https://www.letterride.com', 'https://letterride.com', 'wss:'],
     },
   },
   frameguard: { action: 'deny' },
