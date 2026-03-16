@@ -18,7 +18,7 @@ router.post('/submit', intakeRules, handleValidationErrors, (req, res) => {
     return res.status(503).json({ error: 'Live agent support is not currently available.' });
   }
 
-  const { firstName, lastName, employeeId } = req.body;
+  const { firstName, lastName, employeeId, category = '', topic = '', lang = 'en' } = req.body;
   const sessionToken = uuidv4();
 
   pendingQueue.set(sessionToken, {
@@ -26,6 +26,9 @@ router.post('/submit', intakeRules, handleValidationErrors, (req, res) => {
     firstName,
     lastName,
     employeeId,
+    category,
+    topic,
+    lang,
     timestamp:     Date.now(),
     locked:        false,
     claimedBy:     null,

@@ -21,6 +21,21 @@ const intakeRules = [
     .notEmpty().withMessage('Employee ID is required.')
     .isAlphanumeric().withMessage('Employee ID must be alphanumeric.')
     .isLength({ min: 1, max: 20 }).withMessage('Employee ID must be between 1 and 20 characters.'),
+
+  body('category')
+    .optional()
+    .trim()
+    .isLength({ max: 100 }).withMessage('Category value too long.'),
+
+  body('topic')
+    .optional()
+    .trim()
+    .isLength({ max: 200 }).withMessage('Topic value too long.'),
+
+  body('lang')
+    .optional()
+    .trim()
+    .isIn(['en', 'es']).withMessage('Invalid language value.'),
 ];
 
 // Validation rules for the HR dashboard login form

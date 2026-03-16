@@ -10,6 +10,9 @@ let _fabDot   = null;
 let _baseUrl  = '';
 let _wsConn   = null;
 
+// Tracks the visitor's bot-flow path so the agent gets context on claim
+let _context = { category: '', topic: '' };
+
 function init(msgArea, inputRow, fabDot, baseUrl) {
   _msgArea  = msgArea;
   _inputRow = inputRow;
@@ -130,6 +133,15 @@ function renderSelect(node) {
   appendBotBubble(i18n.t(node.content));
   appendOptions(node.options, (opt) => {
     if (opt.setLang) i18n.setLang(opt.setLang);
+    // Track category: options at cat_select lead to topic_* nodes
+    if (opt.next && opt.next.startsWith('topic_')) {
+      _context.category = opt.label.en || i18n.t(opt.label);
+      _context.topic    = ''; // reset if visitor navigates back and picks a different category
+    }
+    // Track topic: options at topic_* nodes lead to q_* answer nodes
+    if (opt.next && opt.next.startsWith('q_')) {
+      _context.topic = opt.label.en || i18n.t(opt.label);
+    }
     showTyping(300, () => renderNode(opt.next));
   });
 }
@@ -226,6 +238,9 @@ function renderForm(node) {
     for (const field of node.fields) {
       data[field.name] = formEl.elements[field.name].value.trim();
     }
+    data.category = _context.category;
+    data.topic    = _context.topic;
+    data.lang     = i18n.getLang();
 
     try {
       const res = await fetch(`${_baseUrl}/api/intake/submit`, {

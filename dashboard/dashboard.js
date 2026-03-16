@@ -333,7 +333,7 @@ function claimSession(sessionToken) {
 
 function handleClaimAck(msg) {
   state.activeRoomId = msg.roomId;
-  openChatPanel(msg.visitorName, msg.employeeId);
+  openChatPanel(msg.visitorName, msg.employeeId, msg.category, msg.topic, msg.lang);
   toast(`You are now connected with ${msg.visitorName}.`);
 }
 
@@ -344,7 +344,7 @@ function handleClaimDenied(msg) {
 }
 
 // ── Chat panel ────────────────────────────────────────────────────────────
-function openChatPanel(visitorName, employeeId) {
+function openChatPanel(visitorName, employeeId, category, topic, lang) {
   chatEmpty.hidden  = true;
   chatActive.hidden = false;
 
@@ -352,6 +352,24 @@ function openChatPanel(visitorName, employeeId) {
   chatVisMeta.textContent = `Employee ID: ${employeeId}`;
 
   chatMessages.innerHTML = '';
+
+  // Show visitor context banner if we have bot-flow data
+  if (category || topic) {
+    const langLabel = lang === 'es' ? 'Spanish' : 'English';
+    const banner = document.createElement('div');
+    banner.className = 'context-banner';
+    banner.innerHTML = `
+      <div class="context-banner-title">Visitor Context</div>
+      <div class="context-banner-rows">
+        <div class="context-banner-row"><span class="context-label">Language</span>${escHtml(langLabel)}</div>
+        ${category ? `<div class="context-banner-row"><span class="context-label">Category</span>${escHtml(category)}</div>` : ''}
+        ${topic    ? `<div class="context-banner-row"><span class="context-label">Topic</span>${escHtml(topic)}</div>` : ''}
+      </div>
+      <div class="context-banner-note">Bot could not fully resolve this — visitor requested a live agent.</div>
+    `;
+    chatMessages.appendChild(banner);
+  }
+
   appendSystemMessage(`Session started with ${visitorName}.`);
   chatInput.focus();
 

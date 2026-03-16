@@ -614,3 +614,51 @@ html, body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #bcc3cc; }
+
+/* ── Visitor context banner ──────────────────────────────────────────────── */
+.context-banner {
+  background: #e8f0fe;
+  border: 1px solid #c5d8fd;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.context-banner-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.context-banner-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.context-banner-row {
+  display: flex;
+  gap: 6px;
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.context-label {
+  font-weight: 600;
+  color: var(--color-text-sec);
+  min-width: 70px;
+}
+
+.context-banner-note {
+  font-size: 11.5px;
+  color: var(--color-text-sec);
+  border-top: 1px solid #c5d8fd;
+  padding-top: 7px;
+  margin-top: 4px;
+  font-style: italic;
+}

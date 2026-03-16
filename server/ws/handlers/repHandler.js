@@ -98,6 +98,9 @@ function handleClaim(ws, username, sessionToken) {
     roomId,
     visitorName: `${session.firstName} ${session.lastName}`,
     employeeId:  session.employeeId,
+    category:    session.category || '',
+    topic:       session.topic    || '',
+    lang:        session.lang     || 'en',
   });
 
   // Notify visitor that a rep has joined
