@@ -27,14 +27,14 @@ app.use(helmet({
 }));
 
 // ─────────────────────────────────────────────
-// 2. CORS — before rate limiting (handles preflight OPTIONS)
-// ─────────────────────────────────────────────
-app.use(corsMiddleware);
-
-// ─────────────────────────────────────────────
-// 3. Health check — before rate limiter so Render pings don't consume quota
+// 2. Health check — before CORS so Render pings are never blocked
 // ─────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+
+// ─────────────────────────────────────────────
+// 3. CORS — before rate limiting (handles preflight OPTIONS)
+// ─────────────────────────────────────────────
+app.use(corsMiddleware);
 
 // ─────────────────────────────────────────────
 // 4. Rate limiting — applied to all /api/* routes
