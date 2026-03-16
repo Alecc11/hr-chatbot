@@ -32,7 +32,7 @@ app.use(helmet({
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 // ─────────────────────────────────────────────
-// 3. Widget bundle — public file, must be above CORS so any origin can load it
+// 3. Widget bundle — public, embeddable on any site
 // ─────────────────────────────────────────────
 app.get('/widget.bundle.js', (_req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,26 +41,23 @@ app.get('/widget.bundle.js', (_req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// 4. CORS — before rate limiting (handles preflight OPTIONS)
+// 4. Static files and dashboard — served before CORS so direct browser
+//    visits (no Origin header) are never blocked
 // ─────────────────────────────────────────────
-app.use(corsMiddleware);
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/dashboard', express.static(path.join(__dirname, '..', 'dashboard')));
 
 // ─────────────────────────────────────────────
-// 4. Rate limiting — applied to all /api/* routes
+// 5. CORS + Rate limiting — applied to /api/* routes only
 // ─────────────────────────────────────────────
-app.use('/api', rateLimiter);
+app.use('/api', corsMiddleware, rateLimiter);
 
 // ─────────────────────────────────────────────
-// 5. Body parsing — after rate limiting (don't parse rejected requests)
+// 6. Body parsing
 // ─────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 app.use(cookieParser());
-
-// ─────────────────────────────────────────────
-// 6. Static files
-// ─────────────────────────────────────────────
-app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // ─────────────────────────────────────────────
 // 7. Application routes
@@ -68,11 +65,6 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/api/auth',   require('./routes/auth'));
 app.use('/api/bot',    require('./routes/bot'));
 app.use('/api/intake', require('./routes/intake'));
-
-// ─────────────────────────────────────────────
-// 8. Dashboard — serve HTML, protected by JWT auth on API calls
-// ─────────────────────────────────────────────
-app.use('/dashboard', express.static(path.join(__dirname, '..', 'dashboard')));
 
 // ─────────────────────────────────────────────
 // 9. 404 handler — JSON only, never HTML
