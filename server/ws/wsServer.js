@@ -31,16 +31,15 @@ function handleUpgrade(server) {
     const url  = new URL(req.url, 'http://localhost');
     const role = url.searchParams.get('role');
 
-    // ── Time gate: reject all WS connections outside business hours ──────────
-    if (!isOpen()) {
-      console.log(JSON.stringify({ event: 'ws_rejected_time_gate', role }));
-      socket.write('HTTP/1.1 503 Service Unavailable\r\nContent-Type: text/plain\r\n\r\nOffline');
-      socket.destroy();
-      return;
-    }
-
     // ── Visitor connection ────────────────────────────────────────────────────
+    // Time gate only applies to visitors — reps can connect at any time.
     if (role === 'visitor') {
+      if (!isOpen()) {
+        console.log(JSON.stringify({ event: 'ws_rejected_time_gate', role }));
+        socket.write('HTTP/1.1 503 Service Unavailable\r\nContent-Type: text/plain\r\n\r\nOffline');
+        socket.destroy();
+        return;
+      }
       const sessionToken = url.searchParams.get('sessionToken');
       const session      = sessionToken ? sessionManager.pendingQueue.get(sessionToken) : null;
 
