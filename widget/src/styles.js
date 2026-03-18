@@ -339,8 +339,8 @@ module.exports = `
   flex-direction: column;
   animation: msgIn .18s ease-out;
 }
-.hw-live-msg-row.from-rep     { align-items: flex-end; }
-.hw-live-msg-row.from-visitor { align-items: flex-start; }
+.hw-live-msg-row.from-rep     { align-items: flex-start; }
+.hw-live-msg-row.from-visitor { align-items: flex-end; }
 
 .hw-live-label {
   font-family: var(--hw-font);
@@ -363,8 +363,8 @@ module.exports = `
   word-break: break-word;
   box-shadow: 0 1px 3px rgba(0,0,0,.07);
 }
-.from-rep     .hw-live-bubble { background: var(--hw-navy); color: #fff; border-bottom-right-radius: 3px; }
-.from-visitor .hw-live-bubble { background: var(--hw-surface); border: 1px solid var(--hw-border); color: var(--hw-text); border-bottom-left-radius: 3px; }
+.from-rep     .hw-live-bubble { background: var(--hw-surface); border: 1px solid var(--hw-border); color: var(--hw-text); border-radius: 4px 12px 12px 12px; }
+.from-visitor .hw-live-bubble { background: var(--hw-navy); color: #fff; border-radius: 12px 4px 12px 12px; }
 
 /* ── Live input bar ────────────────────────────────────────────────────── */
 .hw-input-row {
